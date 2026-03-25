@@ -19,7 +19,8 @@
     "ioredis": "^5.0.0",
     "pg": "^8.0.0",
     "pgvector": "^0.2.0",
-    "zod": "^3.0.0"
+    "zod": "^3.0.0",
+    "zod-to-json-schema": "^3.0.0"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
