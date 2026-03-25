@@ -1,6 +1,7 @@
 import { Redis } from "ioredis";
+import { REDIS_URL } from "../config.js";
 
-const redis = new Redis(process.env.REDIS_URL!);
+const redis = new Redis(REDIS_URL);
 
 /**
  * Returns true if this messageId has been seen before (duplicate).

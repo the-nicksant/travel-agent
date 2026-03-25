@@ -22,4 +22,6 @@ export const WHATSAPP_PHONE_NUMBER_ID = process.env.WHATSAPP_PHONE_NUMBER_ID ?? 
 export const WHATSAPP_VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN ?? "local-dev-token";
 export const MESSAGING_PROVIDER = process.env.MESSAGING_PROVIDER ?? "console";
 
+export const REDIS_URL = process.env.REDIS_URL!;
+
 export const pool = new Pool({ connectionString: process.env.DATABASE_URL });
