@@ -2,9 +2,10 @@ import { OpenAIEmbeddings } from "@langchain/openai";
 import { toSql } from "pgvector/pg";
 import type { Pool } from "pg";
 import type { IMemoryStore, SearchParams } from "../../interfaces/memory.js";
+import { OPENAI_API_KEY } from "../../config.js";
 
 export function createPgVectorMemoryStore(pool: Pool): IMemoryStore {
-  const embeddings = new OpenAIEmbeddings({ model: "text-embedding-3-small" });
+  const embeddings = new OpenAIEmbeddings({ model: "text-embedding-3-small", apiKey: OPENAI_API_KEY });
 
   return {
     async upsert(userPhone: string, content: string): Promise<void> {
