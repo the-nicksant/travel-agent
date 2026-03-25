@@ -1,11 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { z } from "zod";
-
-// Test the routing schema contract independently of the LLM
-const RouteSchema = z.object({
-  next: z.enum(["context_agent", "action_agent", "response_agent", "END"]),
-  reasoning: z.string(),
-});
+import { RouteSchema } from "./supervisor.js";
 
 describe("RouteSchema", () => {
   it("accepts valid routes", () => {

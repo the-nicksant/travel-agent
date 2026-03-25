@@ -3,13 +3,10 @@ import { HumanMessage, SystemMessage } from "@langchain/core/messages";
 import { z } from "zod";
 import type { TripState } from "../state.js";
 
-const RouteSchema = z.object({
+export const RouteSchema = z.object({
   next: z.enum(["context_agent", "action_agent", "response_agent", "END"]),
   reasoning: z.string(),
 });
-
-const llm = new ChatOpenAI({ model: "gpt-4o", temperature: 0 });
-const router = llm.withStructuredOutput(RouteSchema);
 
 const SUPERVISOR_PROMPT = `You are the routing brain of a WhatsApp travel assistant.
 Given the user message and current state, decide which agent handles next.
@@ -23,12 +20,12 @@ Trip: {tripName} | City: {currentCity}
 Memories already loaded: {hasMemories}
 Tool result available: {hasToolResult}
 
-Route to response_agent if memories are already loaded and no tool is needed.
-Do NOT route to action_agent in this phase — tools are not yet available.`;
+Route to response_agent if memories are already loaded and no tool is needed.`;
 
 export async function supervisorNode(
   state: TripState,
 ): Promise<Partial<TripState>> {
+  const router = new ChatOpenAI({ model: "gpt-4o", temperature: 0 }).withStructuredOutput(RouteSchema);
   const result = await router.invoke([
     new SystemMessage(
       SUPERVISOR_PROMPT
@@ -37,6 +34,7 @@ export async function supervisorNode(
         .replace("{hasMemories}", String(state.retrievedMemories.length > 0))
         .replace(
           "{hasToolResult}",
+          // Tool result is always the last message when supervisor re-runs after actionAgent
           String(state.messages.at(-1)?.getType() === "tool"),
         ),
     ),
