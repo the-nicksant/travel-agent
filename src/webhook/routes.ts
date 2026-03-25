@@ -1,12 +1,14 @@
 import type { FastifyInstance } from "fastify";
-import type { IMessagingProvider } from "../interfaces/messaging.js";
+import type { buildGraph } from "../graph/graph.js";
 import { isDuplicate } from "../utils/dedup.js";
 import { parseMessage } from "./parser.js";
 import { WHATSAPP_VERIFY_TOKEN } from "../config.js";
 
+type TravelGraph = ReturnType<typeof buildGraph>;
+
 export async function registerWebhookRoutes(
   app: FastifyInstance,
-  messaging: IMessagingProvider,
+  graph: TravelGraph,
 ) {
   app.get("/health", async () => ({ ok: true }));
 
@@ -26,13 +28,13 @@ export async function registerWebhookRoutes(
     reply.status(200).send("OK");
 
     // Process async — do NOT await
-    processIncoming(req.body, messaging).catch(console.error);
+    processIncoming(req.body, graph).catch(console.error);
   });
 }
 
 async function processIncoming(
   body: unknown,
-  messaging: IMessagingProvider,
+  graph: TravelGraph,
 ): Promise<void> {
   const entry = (body as any)?.entry?.[0]?.changes?.[0]?.value; // TODO: type this
   const message = entry?.messages?.[0];
@@ -44,8 +46,16 @@ async function processIncoming(
   // Dedup — must be first
   if (await isDuplicate(messageId)) return;
 
-  const { lastMessage } = parseMessage(message);
+  const { lastMessage, messageType, imageUrl, currentCity } = parseMessage(message);
 
-  // Phase 1: echo the message back
-  await messaging.sendText({ to: userPhone, text: lastMessage });
+  await graph.invoke(
+    {
+      lastMessage,
+      messageType,
+      imageUrl,
+      userPhone,
+      ...(currentCity ? { currentCity } : {}),
+    },
+    { configurable: { thread_id: userPhone } },
+  );
 }

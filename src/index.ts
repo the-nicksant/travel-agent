@@ -1,7 +1,10 @@
 import Fastify from "fastify";
-import { MESSAGING_PROVIDER } from "./config.js";
+import { PostgresSaver } from "@langchain/langgraph-checkpoint-postgres";
+import { MESSAGING_PROVIDER, pool } from "./config.js";
 import { createConsoleProvider } from "./providers/messaging/console.js";
 import { createWhatsAppProvider } from "./providers/messaging/whatsapp.js";
+import { createPgVectorMemoryStore } from "./providers/memory/pgvector.js";
+import { buildGraph } from "./graph/graph.js";
 import { registerWebhookRoutes } from "./webhook/routes.js";
 
 const app = Fastify({ logger: true });
@@ -11,7 +14,14 @@ const messaging =
     ? createConsoleProvider()
     : createWhatsAppProvider();
 
-await registerWebhookRoutes(app, messaging);
+const memory = createPgVectorMemoryStore(pool);
+
+const checkpointer = PostgresSaver.fromConnString(process.env.DATABASE_URL!);
+await checkpointer.setup();
+
+const graph = buildGraph({ messaging, memory, checkpointer });
+
+await registerWebhookRoutes(app, graph);
 
 const port = Number(process.env.PORT ?? 3000);
 await app.listen({ port, host: "0.0.0.0" });
