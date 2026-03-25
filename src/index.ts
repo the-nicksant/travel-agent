@@ -1,6 +1,6 @@
 import Fastify from "fastify";
 import { PostgresSaver } from "@langchain/langgraph-checkpoint-postgres";
-import { MESSAGING_PROVIDER, pool } from "./config.js";
+import { MESSAGING_PROVIDER, pool, DATABASE_URL } from "./config.js";
 import { createConsoleProvider } from "./providers/messaging/console.js";
 import { createWhatsAppProvider } from "./providers/messaging/whatsapp.js";
 import { createPgVectorMemoryStore } from "./providers/memory/pgvector.js";
@@ -16,7 +16,7 @@ const messaging =
 
 const memory = createPgVectorMemoryStore(pool);
 
-const checkpointer = PostgresSaver.fromConnString(process.env.DATABASE_URL!);
+const checkpointer = PostgresSaver.fromConnString(DATABASE_URL);
 await checkpointer.setup();
 
 const graph = buildGraph({ messaging, memory, checkpointer });

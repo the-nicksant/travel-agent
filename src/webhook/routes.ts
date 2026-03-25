@@ -6,7 +6,7 @@ import { WHATSAPP_VERIFY_TOKEN } from "../config.js";
 
 type TravelGraph = ReturnType<typeof buildGraph>;
 
-export async function registerWebhookRoutes(
+export function registerWebhookRoutes(
   app: FastifyInstance,
   graph: TravelGraph,
 ) {
