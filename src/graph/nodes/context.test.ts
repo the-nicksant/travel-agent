@@ -35,7 +35,7 @@ describe("createContextNode", () => {
       userPhone: "+5511999999999",
       query: "find me a good restaurant",
       topK: 5,
-      minScore: 0.75,
+      minScore: 0.5,
     });
     expect(result.retrievedMemories).toEqual(["User loves spicy food", "User hates crowds"]);
     expect(result.memoriesSearched).toBe(true);

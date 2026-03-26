@@ -1,4 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
+import { HumanMessage } from "@langchain/core/messages";
 import { createResponseNode } from "./response.js";
 import type { IMessagingProvider } from "../../interfaces/messaging.js";
 
@@ -42,6 +43,15 @@ describe("createResponseNode", () => {
     expect(mockMessaging.sendText).toHaveBeenCalledWith(
       expect.objectContaining({ to: "+5511999999999" }),
     );
+  });
+
+  it("stores both the human message and AI response in state.messages", async () => {
+    const responseNode = createResponseNode(mockMessaging);
+    const result = await responseNode(baseState);
+
+    expect(result.messages).toHaveLength(2);
+    expect(result.messages![0]).toBeInstanceOf(HumanMessage);
+    expect(result.messages![1]).toMatchObject({ content: "Here are some quiet spots in Tokyo..." });
   });
 
   it("does not throw when sendText fails", async () => {

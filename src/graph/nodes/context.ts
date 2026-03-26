@@ -10,7 +10,7 @@ export function createContextNode(memory: IMemoryStore) {
         userPhone: state.userPhone,
         query: state.lastMessage,
         topK: 5,
-        minScore: 0.75,
+        minScore: 0.5,
       });
       return { retrievedMemories: memories, memoriesSearched: true, next: "supervisor" };
     } catch (err) {

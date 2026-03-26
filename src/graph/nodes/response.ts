@@ -48,6 +48,6 @@ export function createResponseNode(messaging: IMessagingProvider) {
       console.error("[responseNode] send failed", err);
     }
 
-    return { messages: [response] };
+    return { messages: [new HumanMessage(state.lastMessage), response] };
   };
 }
