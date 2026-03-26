@@ -16,7 +16,7 @@ export interface ParsedTelegramMessage {
 export function parseTelegramUpdate(update: any): ParsedTelegramMessage | null {
   // Only handle fresh messages, not edits or channel posts
   const message = update?.message;
-  if (!message) return null;
+  if (!message?.chat?.id) return null;
 
   const userPhone = String(message.chat.id);
   const updateId = String(update.update_id);
@@ -73,7 +73,9 @@ export async function startTelegramPolling(
       if (!data.ok || data.result.length === 0) continue;
 
       for (const update of data.result) {
-        offset = update.update_id + 1; // advance before processing to avoid reprocessing on crash
+        if (typeof update.update_id === "number") {
+          offset = update.update_id + 1; // advance before processing to avoid reprocessing on crash
+        }
 
         const parsed = parseTelegramUpdate(update);
         if (!parsed) continue;

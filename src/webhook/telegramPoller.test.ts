@@ -80,4 +80,12 @@ describe("parseTelegramUpdate", () => {
 
     expect(parseTelegramUpdate(update)).toBeNull();
   });
+
+  it("returns null for message missing chat.id", () => {
+    const update = {
+      update_id: 105,
+      message: { text: "hello" }, // no chat field
+    };
+    expect(parseTelegramUpdate(update)).toBeNull();
+  });
 });
