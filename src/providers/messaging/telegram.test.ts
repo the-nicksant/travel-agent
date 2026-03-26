@@ -36,12 +36,15 @@ describe("createTelegramProvider", () => {
 
     expect(mockFetch).toHaveBeenCalledWith(
       expect.stringContaining("/sendMessage"),
-      expect.objectContaining({ method: "POST" }),
+      expect.objectContaining({
+        method: "POST",
+        body: JSON.stringify({ chat_id: "12345678", text: "welcome: Tokyo" }),
+      }),
     );
   });
 
   it("does not throw when API returns non-ok response", async () => {
-    mockFetch.mockResolvedValue({ ok: false, text: vi.fn().mockResolvedValue("Bad Request") });
+    mockFetch.mockResolvedValue({ ok: false, status: 400, text: vi.fn().mockResolvedValue("Bad Request") });
     const { createTelegramProvider } = await import("./telegram.js");
     const provider = createTelegramProvider();
 
