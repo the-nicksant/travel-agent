@@ -7,8 +7,8 @@ const required = [
   "REDIS_URL",
 ];
 
-// WhatsApp vars only required when not using console provider
-if (process.env.MESSAGING_PROVIDER !== "console") {
+// WhatsApp vars only required when explicitly using the WhatsApp provider
+if (process.env.MESSAGING_PROVIDER === "whatsapp") {
   required.push("WHATSAPP_TOKEN", "WHATSAPP_PHONE_NUMBER_ID");
 }
 
