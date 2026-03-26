@@ -10,40 +10,48 @@ export function createWhatsAppProvider(): IMessagingProvider {
 
   return {
     async sendText({ to, text }: OutboundMessage): Promise<void> {
-      const res = await fetch(BASE_URL, {
-        method: "POST",
-        headers,
-        body: JSON.stringify({
-          messaging_product: "whatsapp",
-          to,
-          type: "text",
-          text: { body: text },
-        }),
-      });
-      if (!res.ok) console.error("[whatsapp] sendText failed", await res.text());
+      try {
+        const res = await fetch(BASE_URL, {
+          method: "POST",
+          headers,
+          body: JSON.stringify({
+            messaging_product: "whatsapp",
+            to,
+            type: "text",
+            text: { body: text },
+          }),
+        });
+        if (!res.ok) console.error("[whatsapp] sendText failed", await res.text());
+      } catch (err) {
+        console.error("[whatsapp:sendText]", err);
+      }
     },
 
     async sendTemplate({ to, templateName, params }: TemplateMessage): Promise<void> {
-      const res = await fetch(BASE_URL, {
-        method: "POST",
-        headers,
-        body: JSON.stringify({
-          messaging_product: "whatsapp",
-          to,
-          type: "template",
-          template: {
-            name: templateName,
-            language: { code: "en_US" },
-            components: [
-              {
-                type: "body",
-                parameters: params.map((p) => ({ type: "text", text: p })),
-              },
-            ],
-          },
-        }),
-      });
-      if (!res.ok) console.error("[whatsapp] sendTemplate failed", await res.text());
+      try {
+        const res = await fetch(BASE_URL, {
+          method: "POST",
+          headers,
+          body: JSON.stringify({
+            messaging_product: "whatsapp",
+            to,
+            type: "template",
+            template: {
+              name: templateName,
+              language: { code: "en_US" },
+              components: [
+                {
+                  type: "body",
+                  parameters: params.map((p) => ({ type: "text", text: p })),
+                },
+              ],
+            },
+          }),
+        });
+        if (!res.ok) console.error("[whatsapp] sendTemplate failed", await res.text());
+      } catch (err) {
+        console.error("[whatsapp:sendTemplate]", err);
+      }
     },
   };
 }
