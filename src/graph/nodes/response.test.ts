@@ -26,6 +26,8 @@ const baseState = {
   tripStartDate: "",
   tripEndDate: "",
   retrievedMemories: ["User hates crowded places"],
+  memoriesSearched: true,
+  actionsExecuted: false,
   imageUrl: undefined,
   budgetTotal: undefined,
   budgetCurrency: "BRL",

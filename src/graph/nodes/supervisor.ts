@@ -11,16 +11,20 @@ export const RouteSchema = z.object({
 const SUPERVISOR_PROMPT = `You are the routing brain of a WhatsApp travel assistant.
 Given the user message and current state, decide which agent handles next.
 
-- context_agent: user references past events, preferences, or history would improve the answer
-- action_agent: user needs real-time data (maps, weather, flights, currency, document parsing)
-- response_agent: enough context exists to reply — no tool or memory lookup needed
+- context_agent: ONLY if memoriesSearched=false AND past preferences/history would help answer
+- action_agent: ONLY if actionsExecuted=false AND user needs real-time data (maps, weather, flights, currency)
+- response_agent: ready to reply — use this when memoriesSearched=true OR actionsExecuted=true OR no lookup needed
 - END: conversation is complete or user said goodbye
 
 Trip: {tripName} | City: {currentCity}
-Memories already loaded: {hasMemories}
+Memory search already ran: {memoriesSearched}
+Actions/tools already ran: {actionsExecuted}
 Tool result available: {hasToolResult}
 
-Route to response_agent if memories are already loaded and no tool is needed.`;
+CRITICAL RULES:
+- If memoriesSearched=true → do NOT route to context_agent
+- If actionsExecuted=true → do NOT route to action_agent
+- When in doubt → route to response_agent`;
 
 export async function supervisorNode(
   state: TripState,
@@ -31,7 +35,8 @@ export async function supervisorNode(
       SUPERVISOR_PROMPT
         .replace("{tripName}", state.tripName || "unknown trip")
         .replace("{currentCity}", state.currentCity || "unknown city")
-        .replace("{hasMemories}", String(state.retrievedMemories.length > 0))
+        .replace("{memoriesSearched}", String(state.memoriesSearched === true))
+        .replace("{actionsExecuted}", String(state.actionsExecuted === true))
         .replace(
           "{hasToolResult}",
           // Tool result is always the last message when supervisor re-runs after actionAgent

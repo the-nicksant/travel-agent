@@ -8,5 +8,6 @@ import type { TripState } from "../state.js";
 export async function inputParserNode(
   _state: TripState,
 ): Promise<Partial<TripState>> {
-  return {};
+  // Reset turn-level flags so each message starts fresh regardless of checkpoint state
+  return { memoriesSearched: false, actionsExecuted: false };
 }

@@ -18,6 +18,8 @@ const baseState = {
   tripStartDate: "",
   tripEndDate: "",
   retrievedMemories: [],
+  memoriesSearched: false,
+  actionsExecuted: false,
   imageUrl: undefined,
   budgetTotal: undefined,
   budgetCurrency: "BRL",
@@ -36,6 +38,7 @@ describe("createContextNode", () => {
       minScore: 0.75,
     });
     expect(result.retrievedMemories).toEqual(["User loves spicy food", "User hates crowds"]);
+    expect(result.memoriesSearched).toBe(true);
     expect(result.next).toBe("supervisor");
   });
 
@@ -48,6 +51,7 @@ describe("createContextNode", () => {
     const result = await contextNode(baseState);
 
     expect(result.retrievedMemories).toEqual([]);
+    expect(result.memoriesSearched).toBe(true);
     expect(result.next).toBe("supervisor");
   });
 });

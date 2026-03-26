@@ -9,5 +9,5 @@ export async function actionNode(
   _state: TripState,
 ): Promise<Partial<TripState>> {
   // Phase 3: bind allTools via llm.bindTools(allTools) and run ToolNode here
-  return { next: "supervisor" };
+  return { actionsExecuted: true, next: "supervisor" };
 }

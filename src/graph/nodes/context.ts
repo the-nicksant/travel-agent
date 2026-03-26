@@ -12,10 +12,10 @@ export function createContextNode(memory: IMemoryStore) {
         topK: 5,
         minScore: 0.75,
       });
-      return { retrievedMemories: memories, next: "supervisor" };
+      return { retrievedMemories: memories, memoriesSearched: true, next: "supervisor" };
     } catch (err) {
       console.error("[contextNode]", err);
-      return { retrievedMemories: [], next: "supervisor" };
+      return { retrievedMemories: [], memoriesSearched: true, next: "supervisor" };
     }
   };
 }

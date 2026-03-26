@@ -25,6 +25,8 @@ export const TripStateAnnotation = Annotation.Root({
     reducer: (_prev, next) => next,
     default: () => [],
   }),
+  memoriesSearched: Annotation<boolean>(),
+  actionsExecuted: Annotation<boolean>(),
 
   // Optional image URL for vision tool
   imageUrl: Annotation<string | undefined>(),

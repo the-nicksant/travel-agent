@@ -28,6 +28,8 @@ const baseState = {
   tripStartDate: "",
   tripEndDate: "",
   retrievedMemories: [],
+  memoriesSearched: false,
+  actionsExecuted: false,
   imageUrl: undefined,
   budgetTotal: undefined,
   budgetCurrency: "BRL",
